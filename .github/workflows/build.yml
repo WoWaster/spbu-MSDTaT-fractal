@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Check format
         run: |
@@ -47,7 +47,7 @@ jobs:
           if [ ! -f "burningShip.ppm" ]; then echo "Burning Ship missing"; exit 1; fi
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: fractals
           path: ${{github.workspace}}/build/*.ppm
