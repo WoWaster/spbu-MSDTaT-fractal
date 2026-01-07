@@ -1,0 +1,41 @@
+---
+Checks: >
+  -*,
+  clang-analyzer-*,
+  bugprone-*,
+  llvm-*,
+  misc-*,
+  readability-*,
+  -readability-implicit-bool-conversion,
+  -readability-uppercase-literal-suffix,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  -readability-identifier-length,
+  -readability-magic-numbers
+
+WarningsAsErrors: '*'
+
+CheckOptions:
+  # Enforce lowerCamelCase for functions (e.g., createImage, drawMandelbrot)
+  - key:             readability-identifier-naming.FunctionCase
+    value:           camelBack
+
+  # Enforce CamelCase (PascalCase) for structs and typedefs (e.g., Image, Pixel)
+  - key:             readability-identifier-naming.StructCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.TypedefCase
+    value:           CamelCase
+
+  # Enforce CamelCase for variables and parameters as used in your code (e.g., Width, Img)
+  - key:             readability-identifier-naming.VariableCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.ParameterCase
+    value:           CamelCase
+
+  # Enforce CamelCase for struct members (e.g., Img->Width)
+  - key:             readability-identifier-naming.MemberCase
+    value:           CamelCase
+
+  # Don't nag about header guards matching directory structure too strictly
+  - key:             llvm-header-guard.Style
+    value:           llvm
+...

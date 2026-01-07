@@ -1,0 +1,53 @@
+name: CMake Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check format
+        run: |
+          find . -path ./build -prune -o -type f -name '*.[c|h]' -print | xargs clang-format --style=file --dry-run -Werror
+
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build
+
+      - name: Lint
+        run: |
+          run-clang-tidy-18 -p=${{github.workspace}}/build
+
+      - name: Test Generation
+        working-directory: ${{github.workspace}}/build
+        run: |
+          # Generate Mandelbrot
+          ./fractal_gen --type mandelbrot --width 640 --height 480 --output mandelbrot.ppm
+
+          # Generate Julia
+          ./fractal_gen --type julia --width 640 --height 480 --output julia.ppm
+
+          # Generate Sierpinski
+          ./fractal_gen --type sierpinski --width 640 --height 480 --output sierpinski.ppm
+
+          # Generate Burning Ship
+          ./fractal_gen --type burningShip --width 640 --height 480 --output burningShip.ppm
+
+          # Verify files exist
+          if [ ! -f "mandelbrot.ppm" ]; then echo "Mandelbrot missing"; exit 1; fi
+          if [ ! -f "julia.ppm" ]; then echo "Julia missing"; exit 1; fi
+          if [ ! -f "sierpinski.ppm" ]; then echo "Sierpinski missing"; exit 1; fi
+          if [ ! -f "burningShip.ppm" ]; then echo "Burning Ship missing"; exit 1; fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: fractals
+          path: ${{github.workspace}}/build/*.ppm
