@@ -44,7 +44,7 @@ void savePPM(const Image *Img, const char *Filename) {
   }
 
   fprintf(File, "P6\n%d %d\n255\n", Img->Width, Img->Height);
-  size_t Written =
+  size_t Written = // NOLINT(clang-analyzer-deadcode.DeadStores)
       fwrite(Img->Data, sizeof(Pixel), (long)Img->Width * Img->Height, File);
   assert(Written == (size_t)(Img->Width * Img->Height) &&
          "Incomplete file write");
